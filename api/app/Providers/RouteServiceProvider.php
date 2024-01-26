@@ -35,7 +35,9 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/teams.php'))
                 ->group(base_path('routes/project_categories.php'))
                 ->group(base_path('routes/project_applicants.php'))
-                ->group(base_path('routes/project_priorities.php'));
+                ->group(base_path('routes/project_priorities.php'))
+                ->group(base_path('routes/project_statuses.php'));
+
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
