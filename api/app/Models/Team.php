@@ -12,4 +12,8 @@ class Team extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = ['id'];
+
+    public function users() {
+        return $this->hasMany(User::class);
+    }
 }
