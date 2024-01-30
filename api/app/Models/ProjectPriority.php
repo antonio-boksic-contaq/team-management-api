@@ -11,4 +11,8 @@ class ProjectPriority extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = ['id'];
+
+    public function projects() {
+        return $this->hasMany(Project::class);
+    }
 }
