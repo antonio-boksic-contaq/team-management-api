@@ -21,12 +21,12 @@ class ProjectResource extends JsonResource
             'description' => $this->description,
             'notes'=> $this->notes,
             'project_priority' => new ProjectPriorityResource($this->projectPriority),
-            'progress_status' => $this->project_status,
+            'progress' => $this->progress === null ? 0 : $this->progress,
             'deadline_date' => $this->deadline_date,
             'end_date' => $this->end_date,
             'project_status' => new ProjectStatusResource($this->projectStatus), 
             'project_applicant' => new ProjectApplicantResource($this->projectApplicant), 
-            'project_category' => new ProjectCategoryResource($this->projectCategory), 
+            'project_category' => new ProjectCategoryResource($this->projectCategory),
         ];
     }
 }

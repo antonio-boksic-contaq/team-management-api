@@ -29,18 +29,20 @@ class ProjectRequest extends FormRequest
             'description' => 'nullable|string|max:100',
             'notes' => 'nullable|string|max:200',
             'project_priority_id' => 'required|exists:project_priorities,id',
-            // progress_status viene impostato di default a 0, non lo mandiamo nemmeno nella request
-            // 'progress_status' => '',
+            // progress deve essere 0 di default, non lo voglio nella request
+            'progress' => 'missing',
             'deadline_date' => 'required|date|after:now',
             'end_date' =>'nullable|date',
-            'project_status_id' => 'exists:project_statuses,id', 
-            'project_applicant_id' => 'exists:project_applicants,id', 
-            'project_category_id' => 'exists:project_categories,id', 
+            'project_status_id' => 'required|exists:project_statuses,id', 
+            'project_applicant_id' => 'nullable|exists:project_applicants,id', 
+            'project_category_id' => 'nullable|exists:project_categories,id', 
         ];
 
+        /*
         if($this->request->has('project_id')) {
-            $rules['project_status_id'] = ['required', 'exists:project_applicants,id'];
+            $rules['project_status_id'] = ['required', 'exists:project_statuses,id'];
         }
+        */
 
         return $rules;
 
@@ -67,6 +69,8 @@ class ProjectRequest extends FormRequest
             'project_applicant_id.exists' => 'Il richiedente del progetto selezionato non esiste',
             'project_category_id.required' => 'La categoria del progetto è obbligatoria',
             'project_category_id.exists' => 'La categoria del progetto selezionata non esiste',
+            //l'idea è di creare un altra Request che useremo per gestire aggiornamento di "progress" quando vengono completati dei task.
+            'progress.missing' => 'Il progresso del progetto non può essere impostato tramite richiesta HTTP durante creazione e modifica progetto.'
         ];
     }
 }

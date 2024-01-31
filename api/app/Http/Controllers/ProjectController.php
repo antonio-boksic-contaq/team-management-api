@@ -33,7 +33,7 @@ class ProjectController extends Controller
     {
         $project = Project::create($request->all());
         return response()->json(new ProjectResource($project));
-
+        
     }
 
     /**
@@ -72,15 +72,7 @@ class ProjectController extends Controller
      */
     public function update(ProjectRequest $request, Project $project)
     {
-        // Verifica se il campo project_applicant_id è incluso nella richiesta
-        $hasApplicantId = $request->has('project_applicant_id');
 
-        // Se il campo project_applicant_id non è incluso nella richiesta e il progetto ha già un applicant_id assegnato, imposta il campo a null
-        if (!$hasApplicantId) {
-            $project->project_applicant_id = null;
-        }
-
-        // Aggiorna il progetto con i restanti dati dopo che campo project_applicant_id è già stato impostato in db.
         $project->update($request->all());
         
         return response()->json(new ProjectResource($project));
