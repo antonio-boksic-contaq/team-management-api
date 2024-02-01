@@ -30,7 +30,7 @@ class ProjectRequest extends FormRequest
             'notes' => 'nullable|string|max:200',
             'project_priority_id' => 'required|exists:project_priorities,id',
             // progress deve essere 0 di default, non lo voglio nella request
-            'progress' => 'missing',
+            //'progress' => 'missing',
             'deadline_date' => 'required|date|after:now',
             'end_date' =>'nullable|date',
             'project_status_id' => 'required|exists:project_statuses,id', 

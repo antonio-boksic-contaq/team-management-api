@@ -31,9 +31,9 @@ class ProjectController extends Controller
      */
     public function store(ProjectRequest $request)
     {
-        $project = Project::create($request->all());
+        $project = Project::create($request->except('progress'));
         return response()->json(new ProjectResource($project));
-        
+
     }
 
     /**
@@ -72,9 +72,7 @@ class ProjectController extends Controller
      */
     public function update(ProjectRequest $request, Project $project)
     {
-
-        $project->update($request->all());
-        
+        $project->update($request->except('progress'));
         return response()->json(new ProjectResource($project));
     }
 
