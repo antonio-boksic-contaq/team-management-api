@@ -27,4 +27,8 @@ class User extends Authenticatable
     public function team() {
         return $this->belongsTo(Team::class);
     }
+
+    public function projects() {
+        return $this->belongsToMany(Project::class)->withPivot('supervisor');
+    }
 }

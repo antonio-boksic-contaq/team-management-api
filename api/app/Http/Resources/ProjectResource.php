@@ -27,6 +27,7 @@ class ProjectResource extends JsonResource
             'project_status' => new ProjectStatusResource($this->projectStatus), 
             'project_applicant' => new ProjectApplicantResource($this->projectApplicant), 
             'project_category' => new ProjectCategoryResource($this->projectCategory),
+            'users' => $this->whenLoaded('users')
         ];
     }
 }

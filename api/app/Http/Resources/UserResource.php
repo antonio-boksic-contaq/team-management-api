@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             'gender'=> $this->gender,
             //'team_id'=> $this->team_id,
             'team' => new TeamResource($this->team),
+            'projects' => ProjectResource::collection($this->whenLoaded('projects')),
         ];
     }
 }

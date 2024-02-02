@@ -28,6 +28,7 @@ class UserRequest extends FormRequest
             'email' => 'required|email|unique:users',
             'gender' => Rule::in(['M', 'F', 'N']),
             'team_id' => 'numeric|gt:0|exists:teams,id',
+            'projects.*' => 'nullable|exists:projects,id'
         ];
 
         if($this->request->has('user_id')){

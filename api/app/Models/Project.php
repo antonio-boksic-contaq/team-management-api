@@ -27,4 +27,8 @@ class Project extends Model
     public function projectStatus() {
         return $this->belongsTo(ProjectStatus::class);
     }
+
+    public function users() {
+        return $this->belongsToMany(User::class)->withPivot('supervisor');
+    }
 }

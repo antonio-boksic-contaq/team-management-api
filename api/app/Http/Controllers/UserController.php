@@ -22,12 +22,17 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         $user = User::create($request->all());
-        return response()->json(new UserResource($user));
+
+        // questo sync funziona se non c'è il campo "projects[]" nella request
+        // non funziona però se questo campo è presente ma vuoto.
+        // da capire come gestirla quando arriveremo al frontend.
+        $user->projects()->sync($request->get('projects'));
+
+        return response()->json(new UserResource($user->load('projects')));
     }
 
     public function show(Request $request, User $user) {
-        return response()->json(new UserResource($user->load('team')));
-
+        return response()->json(new UserResource($user->load('projects')));
     }
 
     public function delete(User $user)
