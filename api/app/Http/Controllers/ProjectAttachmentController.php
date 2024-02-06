@@ -47,8 +47,11 @@ class ProjectAttachmentController extends Controller
         $project = Project::find($request->project_id);
         // devo sapere chi è utene che sta caricando il file (potrei inserire user_id nel form che viene mandato nella request)
         $user = User::find($request->user_id);
+        //trovo estensione del file da usare per il mio nuovo nome del file.
+        $original_name = $file->getClientOriginalName();
+        $extension = pathinfo($original_name, PATHINFO_EXTENSION);
 
-        $file_name = $project->id ."_"./*$project->name."_".*/$timestamp."_".$user->name ."_".$user->lastname . ".pdf";
+        $file_name = $project->id ."_"./*$project->name."_".*/$timestamp."_".$user->name ."_".$user->lastname .".".$extension;
 
         // DEVO CARICARE FILE NELLO STORAGE
         Storage::putFileAs('projects', $file , $file_name);
@@ -104,11 +107,14 @@ class ProjectAttachmentController extends Controller
         if ($request->has("file")) {
             // mi salvo nome del file vecchio
             $oldFileName = explode("/", $projectAttachment->file_path);
+
             // devo inserire nuovo file nel database
             $timestamp = Carbon::now()->timestamp;
             $project = Project::find($request->project_id);
             $user = User::find($request->user_id);
-            $file_name = "provaprova".$project->id ."_"./*$project->name."_".*/$timestamp."_".$user->name ."_".$user->lastname . ".pdf";
+            $original_name = $request->file->getClientOriginalName();
+            $extension = pathinfo($original_name, PATHINFO_EXTENSION);
+            $file_name = $project->id ."_".$timestamp."_".$user->name ."_".$user->lastname .".".$extension;
             Storage::putFileAs('projects', $request->file('file') , $file_name);
 
             // devo aggiornare record nel database cambiando anche file_path
