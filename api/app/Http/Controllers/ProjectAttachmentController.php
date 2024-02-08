@@ -36,34 +36,34 @@ class ProjectAttachmentController extends Controller
      */
     public function store(ProjectAttachmentRequest $request)
     {
-        // DEVO TROVARE FILE NELLA REQUEST
-        $file = $request->file('file');
+        // DEVO TROVARE I FILE NELLA REQUEST
+        $files = $request->file('file');
+        // $files può essere pure un array a questo punto
+        // quindi da qui che partiva la gestione del singolo file in precedenza...
+        // va gestita tutta con un ciclo for
 
-        // DEVO DARE UN NOME AL FILE
-        // preparo timestamp
         $timestamp = Carbon::now()->timestamp;
+        $projectAttachments = [];
 
-        // devo sapere di che progetto si parla (potrei inserire project_id nel form che viene mandato nella request)
-        $project = Project::find($request->project_id);
-        // devo sapere chi è utene che sta caricando il file (potrei inserire user_id nel form che viene mandato nella request)
-        $user = User::find($request->user_id);
-        //trovo estensione del file da usare per il mio nuovo nome del file.
-        $original_name = $file->getClientOriginalName();
-        $extension = pathinfo($original_name, PATHINFO_EXTENSION);
+        foreach ($files as $file) {
+            $original_name = $file->getClientOriginalName();
+            $file_name = $timestamp."_".$original_name;
 
-        $file_name = $project->id ."_"./*$project->name."_".*/$timestamp."_".$user->name ."_".$user->lastname .".".$extension;
+            // DEVO CARICARE FILE NELLO STORAGE
+            $projectId = $request->project_id;
+            Storage::putFileAs('projects'."/".$projectId, $file , $file_name);
 
-        // DEVO CARICARE FILE NELLO STORAGE
-        Storage::putFileAs('projects', $file , $file_name);
+            // DEVO INSERIRE FILE_PATH NEL DATABASE
+            // il file_path si riferisce alla cartella public, perchè è da quella che il sito prende i file
+            // creo il file_path e lo inserisco nella request insieme al $original_name che userò in frontend
+            $file_path = "/projects/".$projectId."/".$file_name;
+            $request->merge(['file_path' => $file_path, 'original_name' => $original_name]);
+            $projectAttachment = ProjectAttachment::create($request->except('file'));
 
-        // DEVO INSERIRE FILE_PATH NEL DATABASE
-        // il file_path si riferisce alla cartella public, perchè è da quella che il sito prende i file
-        // creo il file path e lo inserisco nella request
-        $file_path = "/projects/".$file_name;
-        $request->merge(['file_path' => $file_path]);
-        $projectAttachment = ProjectAttachment::create($request->except('file'));
+            $projectAttachments[] = $projectAttachment;
+        }
         
-        return response()->json(new ProjectAttachmentResource($projectAttachment));
+        return response()->json(ProjectAttachmentResource::collection($projectAttachments));
     }
 
     /**
@@ -106,16 +106,18 @@ class ProjectAttachmentController extends Controller
         // se ho file nella richiesta
         if ($request->has("file")) {
             // mi salvo nome del file vecchio
-            $oldFileName = explode("/", $projectAttachment->file_path);
+            $exploded_file_path = explode("/", $projectAttachment->file_path);
+            $oldFileName = $exploded_file_path[3];
 
             // devo inserire nuovo file nel database
             $timestamp = Carbon::now()->timestamp;
-            $project = Project::find($request->project_id);
-            $user = User::find($request->user_id);
             $original_name = $request->file->getClientOriginalName();
-            $extension = pathinfo($original_name, PATHINFO_EXTENSION);
-            $file_name = $project->id ."_".$timestamp."_".$user->name ."_".$user->lastname .".".$extension;
-            Storage::putFileAs('projects', $request->file('file') , $file_name);
+            $file_name = $timestamp."_".$original_name;
+            
+            $projectId = $request->project_id;
+            $file = $request->has("file");
+
+            Storage::putFileAs('projects'."/".$projectId, $file , $file_name);
 
             // devo aggiornare record nel database cambiando anche file_path
             $file_path = '/projects/'.$file_name; 
@@ -123,7 +125,7 @@ class ProjectAttachmentController extends Controller
             $projectAttachment->update($request->all());
 
             // devo eliminare vecchio file (se esiste)            
-            Storage::disk('projects')->delete($oldFileName[2]);
+            Storage::disk('projects')->delete($oldFileName);
         }
         // se non ho file nella richiesta aggiorno quello che ho e basta
         else {

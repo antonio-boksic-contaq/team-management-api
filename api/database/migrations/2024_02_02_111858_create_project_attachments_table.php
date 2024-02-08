@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('project_attachments', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('description');
+            //$table->string('name');
+            //$table->string('description');
+            $table->string('original_name');
             $table->string('file_path');
             $table->foreignId('project_id')->references('id')->on('projects');
             $table->foreignId('user_id')->references('id')->on('users');
