@@ -74,13 +74,6 @@ class ProjectAttachmentController extends Controller
         return response()->json(new ProjectAttachmentResource($projectAttachment));
     }
 
-    public function delete(ProjectAttachment $projectAttachment)
-    {
-       return $projectAttachment->delete() ?
-       response()->json(["error" => false, "message" => "allegato eliminato con successo"]) :
-       response()->json(["error"=> true, "message"=> "errore con eliminazione dell'allegato"]);
-    }
-
     public function restore($id)
     {
         $projectAttachment = ProjectAttachment::withTrashed()->find($id);
@@ -103,35 +96,7 @@ class ProjectAttachmentController extends Controller
      */
     public function update(ProjectAttachmentRequest $request, ProjectAttachment $projectAttachment)
     {
-        // se ho file nella richiesta
-        if ($request->has("file")) {
-            // mi salvo nome del file vecchio
-            $exploded_file_path = explode("/", $projectAttachment->file_path);
-            $oldFileName = $exploded_file_path[3];
-
-            // devo inserire nuovo file nel database
-            $timestamp = Carbon::now()->timestamp;
-            $original_name = $request->file->getClientOriginalName();
-            $file_name = $timestamp."_".$original_name;
-            
-            $projectId = $request->project_id;
-            $file = $request->has("file");
-
-            Storage::putFileAs('projects'."/".$projectId, $file , $file_name);
-
-            // devo aggiornare record nel database cambiando anche file_path
-            $file_path = '/projects/'.$file_name; 
-            $request->merge(['file_path' => $file_path]);
-            $projectAttachment->update($request->all());
-
-            // devo eliminare vecchio file (se esiste)            
-            Storage::disk('projects')->delete($oldFileName);
-        }
-        // se non ho file nella richiesta aggiorno quello che ho e basta
-        else {
-            $projectAttachment->update($request->all());
-        }
-        return new ProjectAttachmentResource($projectAttachment);
+       
     }
 
     /**
@@ -139,6 +104,15 @@ class ProjectAttachmentController extends Controller
      */
     public function destroy(ProjectAttachment $projectAttachment)
     {
-        //
+
+        if (Storage::disk('projects')->delete($projectAttachment->file_path)) {
+            
+            $projectAttachment->delete();
+            return response()->json(['error' => 'false']);
+        
+        } else {
+
+            return response()->json(['error' => 'true']);
+        }
     }
 }
