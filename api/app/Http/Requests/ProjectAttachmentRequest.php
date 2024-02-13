@@ -21,20 +21,14 @@ class ProjectAttachmentRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
-            'name' => 'required|string|max:30',
-            'description' => 'nullable|string|max:100',
+        return $rules = [
+            //'name' => 'required|string|max:30',
+            //'description' => 'nullable|string|max:100',
             'file' => 'required',
             'file.*' => 'mimes:pdf,jpeg,png',
-            'user_id' => 'required|numeric|gt:0|exists:users,id',
-            'project_id' => 'required|numeric|gt:0|exists:projects,id',
+            //'user_id' => 'required|numeric|gt:0|exists:users,id',
+            //'project_id' => 'required|numeric|gt:0|exists:projects,id',
         ];
-
-        if ($this->request->has('project_attachment_id')) {
-            $rules['file'] = 'nullable';
-        }
-
-        return $rules;
     }
 
         /**
@@ -45,10 +39,10 @@ class ProjectAttachmentRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'Il nome dell\'allegato del progetto è obbligatorio',
-            'name.max' => 'Il nome dell\'allegato del progetto può essere di massimo 30 caratteri',
-            'description.max' => 'La descrizione dell\'allegato del progetto può essere di massimo 100 caratteri',
-            'user_id.exists' => 'L\'utente selezionato non esiste nel nostro database',
+            //'name.required' => 'Il nome dell\'allegato del progetto è obbligatorio',
+            //'name.max' => 'Il nome dell\'allegato del progetto può essere di massimo 30 caratteri',
+            //'description.max' => 'La descrizione dell\'allegato del progetto può essere di massimo 100 caratteri',
+            //'user_id.exists' => 'L\'utente selezionato non esiste nel nostro database',
             'project_id.exists' => 'Il progetto selezionato non esiste nel nostro database',
             'file.required' => "è necessario allegare un file",
             'file.*.mimes' => "Il file può avere le seguenti estensioni: pdf,jpeg,png"

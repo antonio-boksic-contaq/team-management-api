@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('file_path');
             $table->foreignId('project_id')->references('id')->on('projects');
             $table->foreignId('user_id')->references('id')->on('users');
-            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -8,8 +8,7 @@ Route::prefix('project-attachments')->group(function () {
   Route::post('/', [ProjectAttachmentController::class, 'store']);
     Route::prefix('{projectAttachment}')->group(function () {
       Route::get('/', [ProjectAttachmentController::class, 'show']);
-      Route::delete('/', [ProjectAttachmentController::class, 'delete']);
+      Route::delete('/', [ProjectAttachmentController::class, 'destroy']);
       Route::put('/', [ProjectAttachmentController::class, 'update']);
-      Route::put('/restore', [ProjectAttachmentController::class, 'restore']);
     });
 });

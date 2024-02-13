@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Resources\ProjectResource;
 use App\Http\Requests\ProjectRequest;
 
+use App\Http\Controllers\ProjectAttachmentController;
+use App\Http\Requests\ProjectAttachmentRequest;
+
 class ProjectController extends Controller
 {
     /**
@@ -31,8 +34,29 @@ class ProjectController extends Controller
      */
     public function store(ProjectRequest $request)
     {
-
         $project = Project::create($request->except('progress'));
+
+        //
+        //
+        if ($request->has("file")) {
+            //$parameterRequest = new Request;
+
+            $parameterRequest = new ProjectAttachmentRequest;
+            //$parameterRequest['file'] = $request->file;
+
+            $parameterRequest->merge([
+            'project_id' => $project->id,
+            'user_id' => $request->user()->id
+            ]);
+
+            // Inserisci i file nella proprietà 'file'
+            $parameterRequest->files->set('file', $request->file('file')); 
+            //dd($parameterRequest);
+
+            $project_attachments_controller = new ProjectAttachmentController;
+
+            $project_attachments_controller->store($parameterRequest);
+        }
 
         // questo sync funziona se non c'è il campo "users[]" nella request
         // non funziona però se questo campo è presente ma vuoto.
@@ -55,7 +79,7 @@ class ProjectController extends Controller
                 $supervisor = $supervisorValues[$index];
                 $supervisorData[$userId] = ['supervisor' => $supervisor];
             }
-
+            
             //dd($supervisorData);
             $project->users()->sync($supervisorData);
         } else {
@@ -103,6 +127,26 @@ class ProjectController extends Controller
     public function update(ProjectRequest $request, Project $project)
     {
         $project->update($request->except('progress'));
+
+        //quando modifico progetto voglio poter solo aggiungere progetti nuovi al massimo
+        //per eliminarli non lo faccio con la update di questo controller
+        //lo faccio direttamente con la destroy di questa constroller.
+        if ($request->has("file")) {
+
+            $parameterRequest = new ProjectAttachmentRequest;
+
+            $parameterRequest->merge([
+            'project_id' => $project->id,
+            'user_id' => $request->user()->id
+            ]);
+
+            // Inserisci i file nella proprietà 'file'
+            $parameterRequest->files->set('file', $request->file('file')); 
+            
+            $project_attachments_controller = new ProjectAttachmentController;
+
+            $project_attachments_controller->store($parameterRequest);
+        }
         
         // vedere commenti della store se poco chiaro
         $idsOfUsers= $request->get('users');

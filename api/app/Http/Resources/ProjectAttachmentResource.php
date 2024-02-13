@@ -18,8 +18,9 @@ class ProjectAttachmentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'description' => $this->description,
+            //'name' => $this->name,
+            //'description' => $this->description,
+            'original_name' => $this->original_name,
             'file_path' => $this->file_path,
             'project' => new ProjectResource($this->project),
             'user' => new UserResource($this->user),
