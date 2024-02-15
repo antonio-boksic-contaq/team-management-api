@@ -9,16 +9,37 @@ use App\Http\Requests\ProjectRequest;
 
 use App\Http\Controllers\ProjectAttachmentController;
 use App\Http\Requests\ProjectAttachmentRequest;
+use Illuminate\Support\Facades\DB;
 
 class ProjectController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $projectPriorities = Project::all();
-        return response()->json(ProjectResource::collection($projectPriorities));
+    public function index(Request $request)
+    {   
+        $query = Project::orderBy("created_at");
+
+        if (($request->has('month')) )
+        {
+            $months = $request->month;
+
+            $query
+            //->whereMonth('created_at', $month); // questa è una semplice WHERE
+            ->whereIn(DB::raw('MONTH(created_at)'), $months); // questa è una WHERE con un IN(range)
+        }
+
+        if (($request->has('year')))
+        {
+            $years = $request->year;
+
+            $query
+            //->whereYear('created_at', $year);
+            ->whereIn(DB::raw('YEAR(created_at)'), $years);
+        }
+
+        $projects = $query->get();
+        return response()->json(ProjectResource::collection($projects));
     }
 
     /**
@@ -36,6 +57,7 @@ class ProjectController extends Controller
     {
         $project = Project::create($request->except('progress'));
 
+      
         //
         //
         if ($request->has("file")) {
@@ -45,8 +67,8 @@ class ProjectController extends Controller
             //$parameterRequest['file'] = $request->file;
 
             $parameterRequest->merge([
-            'project_id' => $project->id,
-            'user_id' => $request->user()->id
+                'project_id' => $project->id,
+                'user_id' => $request->user()->id
             ]);
 
             // Inserisci i file nella proprietà 'file'
@@ -136,8 +158,8 @@ class ProjectController extends Controller
             $parameterRequest = new ProjectAttachmentRequest;
 
             $parameterRequest->merge([
-            'project_id' => $project->id,
-            'user_id' => $request->user()->id
+                'project_id' => $project->id,
+                'user_id' => $request->user()->id
             ]);
 
             // Inserisci i file nella proprietà 'file'
