@@ -25,6 +25,10 @@ class Task extends Model
     }
 
     public function taskStatus() {
-        return $this->belongsTo(TaskPriority::class);
+        return $this->belongsTo(TaskStatus::class);
+    }
+    
+    public function users() {
+        return $this->belongsToMany(User::class);
     }
 }

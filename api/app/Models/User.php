@@ -35,4 +35,8 @@ class User extends Authenticatable
     public function projectAttachments() {
         return $this->hasMany(ProjectAttachment::class);
     }
+
+    public function tasks() {
+        return $this->belongsToMany(Task::class);
+    }
 }
