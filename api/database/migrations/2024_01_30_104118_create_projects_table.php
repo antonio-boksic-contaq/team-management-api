@@ -21,8 +21,8 @@ return new class extends Migration
             // da caprie come gestire progress dato che dovrebbe essere una formula: 
             // expected hours di task associati al progetto completati /  expected hours di tutti task associati al progetto
             $table->integer('progress')->unsigned()->default(0);
-            $table->dateTime('deadline_date');
-            $table->dateTime('end_date')->nullable();
+            $table->date('deadline_date');
+            $table->date('end_date')->nullable();
             $table->foreignId('project_status_id')->references('id')->on('project_statuses');
             $table->foreignId('project_applicant_id')->nullable()->references('id')->on('project_applicants');
             $table->foreignId('project_category_id')->nullable()->references('id')->on('project_categories');

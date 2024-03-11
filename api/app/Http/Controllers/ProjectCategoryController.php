@@ -14,8 +14,8 @@ class ProjectCategoryController extends Controller
      */
     public function index()
     {
-        $teams = ProjectCategory::all();
-        return ProjectCategoryResource::collection($teams);
+        $project_categories = ProjectCategory::all();
+        return response()->json(ProjectCategoryResource::collection($project_categories));
     }
 
     /**

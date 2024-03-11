@@ -12,11 +12,33 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\SendPassword;
 
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UsersExport;
+
 class UserController extends Controller
 {
-    public function index() {
+    public function index(Request $request) {
         $query = User::orderBy('lastname');
-        return response()->json(UserResource::collection($query->get()));
+
+        //if ($request['onlySupervisors'] = 1) return response()->json(UserResource::collection($query->get()));
+
+
+        if ($request->has('onlysupervisors') && $request->onlysupervisors == 1) {
+            //mi unisce users a model_has_roles
+           
+            // PROVARE A FARE CON SPATIE
+
+            $query->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            //mi unisce model_has_roles a roles
+                  ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                  //mi prende i record che hanno roles.name = Supervisore
+                  ->where('roles.name', 'Supervisore')
+                  // selezionia solo le colonne della tabella degli utenti
+                  ->select('users.*'); 
+                  //dd($query->get());
+        }
+            return response()->json(UserResource::collection($query->get()));
+        
     }
 
     public function store(UserRequest $request)
@@ -77,4 +99,8 @@ class UserController extends Controller
         return response()->json(new UserResource($user));
     }
 
+    public function export() 
+    {
+        return Excel::download(new UsersExport, 'users.xlsx');
+    }
 }

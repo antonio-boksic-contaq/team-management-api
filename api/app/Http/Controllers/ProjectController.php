@@ -38,6 +38,18 @@ class ProjectController extends Controller
             ->whereIn(DB::raw('YEAR(created_at)'), $years);
         }
 
+        if ($request['trashed'] == 1 )
+        {
+            $query->withTrashed();
+        }
+
+        if ($request['trashed'] == 2 )
+        {
+            $query->onlyTrashed();
+        }
+
+
+
         $projects = $query->get();
         return response()->json(ProjectResource::collection($projects));
     }
@@ -55,16 +67,12 @@ class ProjectController extends Controller
      */
     public function store(ProjectRequest $request)
     {
+        //dd($request);
         $project = Project::create($request->except('progress'));
 
-      
-        //
-        //
         if ($request->has("file")) {
-            //$parameterRequest = new Request;
 
             $parameterRequest = new ProjectAttachmentRequest;
-            //$parameterRequest['file'] = $request->file;
 
             $parameterRequest->merge([
                 'project_id' => $project->id,
@@ -92,21 +100,19 @@ class ProjectController extends Controller
 
         $idsOfUsers= $request->get('users');
 
-        if ( $request->has("supervisor"))
-        {
-            $supervisorData = [];
-            $supervisorValues = $request->get('supervisor');
+        $idsOfSupervisors = $request->get('supervisors');
 
-            foreach ($idsOfUsers as $index => $userId) {
-                $supervisor = $supervisorValues[$index];
-                $supervisorData[$userId] = ['supervisor' => $supervisor];
-            }
-            
-            //dd($supervisorData);
-            $project->users()->sync($supervisorData);
-        } else {
-            $project->users()->sync($idsOfUsers);
+        //creo un array unico da usare per il sync
+        $combinedIds = [];
+
+        foreach ($idsOfUsers as $userId) {
+            $combinedIds[$userId] = ['supervisor' => 0]; // imposto supervisor = 0 per utenti normali
         }
+        foreach ($idsOfSupervisors as $supervisorId) {
+            $combinedIds[$supervisorId] = ['supervisor' => 1]; //  imposto supervisor = 1 per supervisori
+        }
+
+        $project->users()->sync($combinedIds);
 
         return response()->json(new ProjectResource($project->load('users')));
 
@@ -117,7 +123,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        return response()->json(new ProjectResource($project->load('users')));
+        return response()->json(new ProjectResource($project->load(['users','projectAttachments'])));
     }
 
     public function delete(Project $project)
@@ -173,21 +179,19 @@ class ProjectController extends Controller
         // vedere commenti della store se poco chiaro
         $idsOfUsers= $request->get('users');
 
-        if ( $request->has("supervisor"))
-        {
-            $supervisorData = [];
-            $supervisorValues = $request->get('supervisor');
+        $idsOfSupervisors = $request->get('supervisors');
 
-            foreach ($idsOfUsers as $index => $userId) {
-                $supervisor = $supervisorValues[$index];
-                $supervisorData[$userId] = ['supervisor' => $supervisor];
-            }
+        //creo un array unico da usare per il sync
+        $combinedIds = [];
 
-            //dd($supervisorData);
-            $project->users()->sync($supervisorData);
-        } else {
-            $project->users()->sync($idsOfUsers);
+        foreach ($idsOfUsers as $userId) {
+            $combinedIds[$userId] = ['supervisor' => 0]; // imposto supervisor = 0 per utenti normali
         }
+        foreach ($idsOfSupervisors as $supervisorId) {
+            $combinedIds[$supervisorId] = ['supervisor' => 1]; //  imposto supervisor = 1 per supervisori
+        }
+
+        $project->users()->sync($combinedIds);
 
         return response()->json(new ProjectResource($project));
     }

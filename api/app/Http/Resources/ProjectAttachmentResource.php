@@ -16,6 +16,7 @@ class ProjectAttachmentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
         return [
             'id' => $this->id,
             //'name' => $this->name,
@@ -23,7 +24,8 @@ class ProjectAttachmentResource extends JsonResource
             'original_name' => $this->original_name,
             'file_path' => $this->file_path,
             'project' => new ProjectResource($this->project),
-            'user' => new UserResource($this->user),
+            'user' => $this->user()->select('id','name','lastname')->get(),
+            //'users' => $this->user
         ];
     }
 }

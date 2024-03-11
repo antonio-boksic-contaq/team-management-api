@@ -115,4 +115,14 @@ class ProjectAttachmentController extends Controller
             return response()->json(['error' => 'true']);
         }
     }
+
+    public function download(ProjectAttachment $projectAttachment)
+{
+    // potrei fare dei controlli di sicurezza qui per vedere se utente può effettivamente fare download
+    //ad esempio controllare se utente/supervisore è associato al progetto
+    
+    //return $projectAttachment->file_path;
+    //qua a me serve storage/app/Projects/idprogetto/filename
+    return response()->download(storage_path('app' . $projectAttachment->file_path));
+}
 }
