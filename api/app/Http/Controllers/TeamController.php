@@ -13,10 +13,14 @@ class TeamController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $teams = Team::all();
-        return TeamResource::collection($teams);
+        $query = Team::orderBy('id');
+
+        if ($request['trashed'] == 1) $query->withTrashed();
+        if ($request['trashed'] == 2) $query->onlyTrashed();
+        
+        return response()->json(TeamResource::collection($query->get()));
     }
 
     /**

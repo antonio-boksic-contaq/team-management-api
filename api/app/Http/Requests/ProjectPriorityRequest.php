@@ -51,6 +51,7 @@ class ProjectPriorityRequest extends FormRequest
             'name.unique' => 'Il nome della priorità è già utilizzato',
             'name.max' => 'il nome della priorità può essere di massimo 30 caratteri',
             'priority_level.required' => 'Il livello della priorità è obbligatorio',
+            'priority_level.integer' => 'Il livello della priorità deve essere un numero intero',
             'priority_level.unique' => 'Il livello della priorità è già utilizzato',
             'icon.unique' => "l'icona della priorità è già utilizzata",
             'color.unique' => "il colore della priorità è già utilizzata",

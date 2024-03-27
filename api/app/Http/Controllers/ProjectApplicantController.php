@@ -12,10 +12,14 @@ class ProjectApplicantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $projectApplicants = ProjectApplicant::all();
-        return response()->json(ProjectApplicantResource::collection($projectApplicants));
+        $query = ProjectApplicant::orderBy('name');
+
+        if ($request['trashed'] == 1) $query->withTrashed();
+        if ($request['trashed'] == 2) $query->onlyTrashed();
+        
+        return response()->json(ProjectApplicantResource::collection($query->get()));
     }
 
     /**

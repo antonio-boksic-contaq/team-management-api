@@ -12,10 +12,14 @@ class ProjectCategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $project_categories = ProjectCategory::all();
-        return response()->json(ProjectCategoryResource::collection($project_categories));
+        $query = ProjectCategory::orderBy("id");
+
+        if ($request['trashed'] == 1) $query->withTrashed();
+        if ($request['trashed'] == 2) $query->onlyTrashed();
+        
+        return response()->json(ProjectCategoryResource::collection($query->get()));
     }
 
     /**

@@ -12,11 +12,14 @@ class ProjectStatusController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $projectStatuses = ProjectStatus::all();
-        return response()->json(ProjectStatusResource::collection($projectStatuses));
+        $query = ProjectStatus::orderBy('id');
 
+        if ($request['trashed'] == 1) $query->withTrashed();
+        if ($request['trashed'] == 2) $query->onlyTrashed();
+        
+        return response()->json(ProjectStatusResource::collection($query->get()));
     }
 
     /**

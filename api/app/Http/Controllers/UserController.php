@@ -20,7 +20,8 @@ class UserController extends Controller
     public function index(Request $request) {
         $query = User::orderBy('lastname');
 
-        //if ($request['onlySupervisors'] = 1) return response()->json(UserResource::collection($query->get()));
+        if ($request['trashed'] == 1) $query->withTrashed();
+        if ($request['trashed'] == 2) $query->onlyTrashed();
 
 
         if ($request->has('onlysupervisors') && $request->onlysupervisors == 1) {
@@ -43,7 +44,10 @@ class UserController extends Controller
 
     public function store(UserRequest $request)
     {
+        
+        
         $user = User::create($request->all());
+        $user->assignRole($request->get('role'));
 
         // questo sync funziona se non c'è il campo "projects[]" nella request
         // non funziona però se questo campo è presente ma vuoto.
