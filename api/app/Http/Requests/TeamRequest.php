@@ -29,7 +29,7 @@ class TeamRequest extends FormRequest
 
 
         
-        $rules['title'] = $this->request->has('team_id') ? 
+        $rules['name'] = $this->request->has('team_id') ? 
         [
             'required',
             'string',
@@ -49,9 +49,9 @@ class TeamRequest extends FormRequest
     public function messages()
     {
         return [
-            'title.required' => 'Il titolo del team è obbligatorio',
-            'title.unique' => 'Il titolo del team è già utilizzato',
-            'title.max' => 'il titolo del team può essere di massimo 30 caratteri',
+            'name.required' => 'Il titolo del team è obbligatorio',
+            'name.unique' => 'Il titolo del team è già utilizzato',
+            'name.max' => 'il titolo del team può essere di massimo 30 caratteri',
             'description.max' => 'la descrizione del team può essere di massimo 100 caratteri',
         ];
     }
