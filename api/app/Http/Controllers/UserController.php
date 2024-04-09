@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Project;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\UserRequest;
 
@@ -38,7 +39,18 @@ class UserController extends Controller
                   ->select('users.*'); 
                   //dd($query->get());
         }
-            return response()->json(UserResource::collection($query->get()));
+
+        if ($request->has('project_id')) {  
+            //prendo solo utenti che nella pivot hanno project_id uguale a quello nella request
+            $project_id = $request->project_id;
+            $query->join('project_user', 'users.id', '=', 'project_user.user_id')
+                  ->where('project_user.project_id', $project_id);
+
+                  // TODO PROVARE A FARE CON RELAZIONE E NON CON JOIN
+        }
+        
+
+        return response()->json(UserResource::collection($query->get()));
         
     }
 

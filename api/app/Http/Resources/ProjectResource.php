@@ -30,6 +30,9 @@ class ProjectResource extends JsonResource
             'project_status' => new ProjectStatusResource($this->projectStatus), 
             'project_applicant' => new ProjectApplicantResource($this->projectApplicant), 
             'project_category' => new ProjectCategoryResource($this->projectCategory),
+            // all_users, e in particolare la resource applicata a questo, mi serve per
+            // poter passare complete_name all'attributo label di vue-select nel form di task per associare utenti e task.
+            'all_users' => UserResource::collection($this->users),
             'users' => $this->users()->wherePivot('supervisor', 0)->get(),
             "supervisors" =>  $this->users()->wherePivot('supervisor', 1)->get(),
             "deleted_at" => $this->deleted_at,

@@ -13,10 +13,17 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = Task::all();
-        return response()->json(TaskResource::collection($tasks));
+
+        $query = Task::orderBy("created_at");
+
+        if (($request->has('project_id')) )
+        {
+            $query->where('project_id', $request->project_id);
+        }
+
+        return response()->json(TaskResource::collection($query->get()));
     }
 
     /**

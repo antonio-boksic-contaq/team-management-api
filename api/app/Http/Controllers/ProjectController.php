@@ -10,6 +10,8 @@ use App\Http\Requests\ProjectRequest;
 use App\Http\Controllers\ProjectAttachmentController;
 use App\Http\Requests\ProjectAttachmentRequest;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\{ProjectsExport};
 
 class ProjectController extends Controller
 {
@@ -29,27 +31,16 @@ class ProjectController extends Controller
             ->whereIn(DB::raw('MONTH(created_at)'), $months); // questa è una WHERE con un IN(range)
         }
 
-        if (($request->has('year')))
-        {
-            $years = $request->year;
+        if (($request->has('year'))) $query->whereIn(DB::raw('YEAR(created_at)'), $request->year);
 
-            $query
-            //->whereYear('created_at', $year);
-            ->whereIn(DB::raw('YEAR(created_at)'), $years);
+        if ($request['trashed'] == 1 ) $query->withTrashed();
+
+        if ($request['trashed'] == 2 ) $query->onlyTrashed();
+
+        if($request->has('export')){
+            return Excel::download(new ProjectsExport($query->get(), $request->has('trashed')), 'progetti.xlsx');
         }
-
-        if ($request['trashed'] == 1 )
-        {
-            $query->withTrashed();
-        }
-
-        if ($request['trashed'] == 2 )
-        {
-            $query->onlyTrashed();
-        }
-
-
-
+        
         $projects = $query->get();
         return response()->json(ProjectResource::collection($projects));
     }
