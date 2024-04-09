@@ -31,6 +31,7 @@ class RolesAndPermissionSeeder extends Seeder
             'task priority',
             'task status',
             'task',
+            'task attachment',
             'team',
             'user',  
         ];

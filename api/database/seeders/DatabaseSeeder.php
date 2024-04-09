@@ -20,7 +20,16 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
+            TeamSeeder::class,
+            ProjectApplicantSeeder::class,
+            ProjectStatusSeeder::class,
+            ProjectCategorySeeder::class,
+            ProjectPrioritySeeder::class,
             RolesAndPermissionSeeder::class,
+            UserSeeder::class,
+            ProjectSeeder::class,
+            TaskStatusSeeder::class,
+            TaskPrioritySeeder::class,
         ]);
     }
 }

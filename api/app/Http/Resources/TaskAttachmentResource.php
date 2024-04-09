@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\ProjectResource;
 
-class ProjectAttachmentResource extends JsonResource
+class TaskAttachmentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

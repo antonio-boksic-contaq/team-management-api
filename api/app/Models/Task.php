@@ -31,4 +31,8 @@ class Task extends Model
     public function users() {
         return $this->belongsToMany(User::class);
     }
+
+    public function taskAttachments() {
+        return $this->hasMany(TaskAttachment::class);
+    }
 }

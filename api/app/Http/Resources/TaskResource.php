@@ -26,7 +26,10 @@ class TaskResource extends JsonResource
             'task_status' => $this->taskStatus,
             'task_priority' => $this->taskPriority,
             'project' => new ProjectResource($this->project),
-            'user' => new UserResource($this->user),
+            'users' => UserResource::collection($this->users),
+            //"files" => TaskAttachmentResource::collection($this->whenLoaded('projectAttachments')),
+            "files" => TaskAttachmentResource::collection($this->taskAttachments),
+
         ];
     }
 }

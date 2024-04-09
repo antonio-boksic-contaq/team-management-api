@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ProjectAttachmentRequest extends FormRequest
+class TaskAttachmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,7 +27,7 @@ class ProjectAttachmentRequest extends FormRequest
             'file' => 'required',
             'file.*' => 'mimes:pdf,jpeg,png',
             //'user_id' => 'required|numeric|gt:0|exists:users,id',
-            'project_id' => 'required|numeric|gt:0|exists:projects,id',
+            'task_id' => 'required|numeric|gt:0|exists:projects,id',
         ];
     }
 
@@ -43,7 +43,7 @@ class ProjectAttachmentRequest extends FormRequest
             //'name.max' => 'Il nome dell\'allegato del progetto può essere di massimo 30 caratteri',
             //'description.max' => 'La descrizione dell\'allegato del progetto può essere di massimo 100 caratteri',
             //'user_id.exists' => 'L\'utente selezionato non esiste nel nostro database',
-            'project_id.exists' => 'Il progetto selezionato non esiste nel nostro database',
+            'task_id.exists' => 'Il progetto selezionato non esiste nel nostro database',
             'file.required' => "è necessario allegare un file",
             'file.*.mimes' => "Il file può avere le seguenti estensioni: pdf,jpeg,png"
         ];

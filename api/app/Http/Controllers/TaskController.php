@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\TaskResource;
 use App\Http\Requests\TaskRequest;
 use Carbon\Carbon;
+use App\Http\Requests\TaskAttachmentRequest;
 
 class TaskController extends Controller
 {
@@ -40,6 +41,26 @@ class TaskController extends Controller
     public function store(TaskRequest $request)
     {
         $task = Task::create($request->all());
+
+        if ($request->has("file")) {
+
+            $parameterRequest = new TaskAttachmentRequest;
+
+            $parameterRequest->merge([
+                'task_id' => $task->id,
+                'user_id' => $request->user()->id,
+                'project_id' => $task->project_id,
+            ]);
+
+            // Inserisci i file nella proprietà 'file'
+            $parameterRequest->files->set('file', $request->file('file')); 
+            //dd($parameterRequest);
+
+            $task_attachments_controller = new TaskAttachmentController;
+
+            $task_attachments_controller->store($parameterRequest);
+        }
+
         $task->users()->sync($request->users);
 
         return response()->json(new TaskResource($task));
