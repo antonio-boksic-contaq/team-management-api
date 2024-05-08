@@ -41,4 +41,12 @@ class User extends Authenticatable
     public function tasks() {
         return $this->belongsToMany(Task::class);
     }
+
+    public function taskAttachments() {
+        return $this->hasMany(TaskAttachment::class);
+    }
+
+    public function taskComments() {
+        return $this->hasMany(TaskComment::class);
+    }
 }

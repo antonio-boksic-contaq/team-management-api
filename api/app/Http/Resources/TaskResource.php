@@ -22,13 +22,14 @@ class TaskResource extends JsonResource
             'deadline_date' => $this->deadline_date,
             'start_date' => $this->start_date,
             'finish_date' => $this->finish_date,
-            'expected_hours' => $this->expected_hours,
+            'time_difficulty_score' => $this->time_difficulty_score,
             'task_status' => $this->taskStatus,
             'task_priority' => $this->taskPriority,
             'project' => new ProjectResource($this->project),
             'users' => UserResource::collection($this->users),
             //"files" => TaskAttachmentResource::collection($this->whenLoaded('projectAttachments')),
-            "files" => TaskAttachmentResource::collection($this->taskAttachments),
+            "files" => TaskAttachmentResource::collection($this->taskAttachments), 
+            "comments" => TaskCommentResource::collection($this->taskComments), 
 
         ];
     }

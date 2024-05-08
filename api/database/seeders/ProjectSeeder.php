@@ -23,6 +23,7 @@ class ProjectSeeder extends Seeder
         'description' => 'Corso introduttivo su Vue obbligatorio per sviluppatori appena entrati',
         'notes' => 'link del corso: www.udemy.com',
         'project_priority_id' => 3,
+        'start_date' => Carbon::now(),        
         'deadline_date' => Carbon::now()->addMonth(),
         'project_status_id' => 1,
         'project_applicant_id' => 1,
@@ -35,13 +36,39 @@ class ProjectSeeder extends Seeder
 
       foreach ($idsOfUsers as $userId) {
         $combinedIds[$userId] = ['supervisor' => 0]; // imposto supervisor = 0 per utenti normali
-    }
-    foreach ($idsOfSupervisors as $supervisorId) {
-        $combinedIds[$supervisorId] = ['supervisor' => 1]; //  imposto supervisor = 1 per supervisori
-    }
+      }
+      foreach ($idsOfSupervisors as $supervisorId) {
+          $combinedIds[$supervisorId] = ['supervisor' => 1]; //  imposto supervisor = 1 per supervisori
+      }
 
-    $project->users()->sync($combinedIds);
+      $project->users()->sync($combinedIds);
 
+      // SECONDO PROGETTO
+
+      $project = Project::create([
+        'name' => 'Corso Vue su Youtube',
+        'description' => 'Corso introduttivo su Vue obbligatorio per sviluppatori appena entrati',
+        'notes' => 'link del corso: www.youtube.com',
+        'project_priority_id' => 3,
+        'start_date' => Carbon::now(),        
+        'deadline_date' => Carbon::now()->addMonth(),
+        'project_status_id' => 1,
+        'project_applicant_id' => 1,
+        'project_category_id' => 1,
+      ]);
+
+      //ripreso codice dal controller per fare questo sync, probabilmente c'è un modo migliore per farlo...
+      $idsOfUsers= [2];
+      $idsOfSupervisors = [1];
+
+      foreach ($idsOfUsers as $userId) {
+        $combinedIds[$userId] = ['supervisor' => 0]; // imposto supervisor = 0 per utenti normali
+      }
+      foreach ($idsOfSupervisors as $supervisorId) {
+          $combinedIds[$supervisorId] = ['supervisor' => 1]; //  imposto supervisor = 1 per supervisori
+      }
+
+      $project->users()->sync($combinedIds);
 
 
     }

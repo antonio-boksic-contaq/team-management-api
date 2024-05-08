@@ -39,13 +39,14 @@ class ProjectsExport implements FromCollection, WithHeadings, WithMapping
 
     public function map($project) : array {
 
+        // dd di project volendo
         $map = [
             $project->id,
             $project->name,
             $project->description,
             $project->notes,
             $project->projectPriority->name,
-            $project->progress,
+            $project->progress(),
             $project->deadline_date,
             $project->projectStatus->name,
             $project->projectCategory->name,
@@ -61,6 +62,7 @@ class ProjectsExport implements FromCollection, WithHeadings, WithMapping
     */
     public function collection()
     {
+
         return ProjectResource::collection($this->data);
     }
 }

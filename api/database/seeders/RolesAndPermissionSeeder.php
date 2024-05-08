@@ -92,13 +92,16 @@ class RolesAndPermissionSeeder extends Seeder
 
         // DA QUI GESTISCO I RUOLI
 
+        // Supervisore ha tutti i permessi
         $role = Role::create(['name' => 'Supervisore']);
         $role->givePermissionTo(Permission::all());
 
+        //Collaboratore
         $role = Role::create(['name' => 'Collaboratore',]);
-        $role->givePermissionTo(Permission::where('name', 'like', '%project attachment%')
-                                            ->orWhere('name', 'like', '%see%')->get());
-        $role->givePermissionTo(['change task status']);
+        $role->givePermissionTo(Permission::where('name', 'like', '%project attachment%')// qua gli do tutti i permessi che contengono "project attachment"
+                                            ->orWhere('name', 'like', '%task%') // qua gli do tutti i permessi che contengono "project"
+                                            ->orWhere('name', 'like', '%see%')->get()); // qua gli do tutti i permessi che contengono "see"
+        $role->givePermissionTo(['change task status']); // qua gli do permesso "change task status"
         
 
         //$role = Role::create(['name' => 'Mauro']);

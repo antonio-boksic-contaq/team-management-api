@@ -27,9 +27,9 @@ class TaskRequest extends FormRequest
         'description' => 'nullable|string|max:300',
         'notes' => 'nullable|string|max:300',
         'deadline_date' => 'nullable|date|after:now',
-        'start_date' => 'missing', //questa non dovrebbe essere inseribile in fase di creazione
+        'start_date' => 'required|date', //questa non dovrebbe essere inseribile in fase di creazione
         'end_date' => 'missing', //questa non dovrebbe essere inseribile in fase di creazione
-        'expected_hours' => 'numeric|gt:0',
+        'time_difficulty_score' => 'numeric|between:1,10',
         'project_id' => 'required|numeric|exists:projects,id',
         'task_status_id' => 'required|numeric|exists:task_statuses,id',
         'task_priority_id' => 'required|numeric|exists:task_priorities,id',
@@ -56,11 +56,13 @@ class TaskRequest extends FormRequest
             'description.max' => 'La descrizione del task può essere di massimo 100 caratteri',
             'notes.max' => 'Le note del task può essere di massimo 100 caratteri',
             'deadline_date.after' => 'La data della deadline deve essere posteriore rispetto alla data di oggi',
-            'start_date.missing' => 'La data di inizio del task non può essere inserita in fase di creazione',
+            'start_date.required' => 'La data di inizo è obbligatoria',
+            'start_date.date' => 'La data di inizo non è stata inserita nel formato corretto',
             'end_date.missing' => 'La data di fine del task non può essere inserita in fase di creazione',
             'project_id.required' => "Il progetto da associare al task è obbligatiorio",
             'task_status_id.required' => "lo status da associare al task è obbligatiorio",
             'task_priority_id.required' => "la priorità da associare al task è obbligatiorio",
+            'time_difficulty_score.between' => "il valore del coefficiente di difficoltà deve essere compreso tra 1 e 10"
         ];
     }
 }

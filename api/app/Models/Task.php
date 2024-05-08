@@ -35,4 +35,31 @@ class Task extends Model
     public function taskAttachments() {
         return $this->hasMany(TaskAttachment::class);
     }
+
+    public function taskComments() {
+        return $this->hasMany(TaskComment::class);
+    }
+
+    //TODO per ora ho copiaincollato quello che ho nella resource, dopo vediamo di sistemarla e capire come usarla nella resource
+    public function getProgress() {
+        $tasks_of_this_project = $this->tasks;
+        //dd($tasks_of_this_project);
+
+        $score_of_completed_tasks = 0;
+        $total_score_of_tasks = 0;
+
+        foreach ($tasks_of_this_project as $task ) {
+            //se task ha status completato, aggiungo score sia a ore totali che completate
+            if ($task->task_status_id === 3) {
+                    $total_score_of_tasks += $task->time_difficulty_score;
+                    $score_of_completed_tasks += $task->time_difficulty_score;
+            // altrimenti aggiungo lo score solo a ore totali
+            } else {
+                    $total_score_of_tasks += $task->time_difficulty_score;
+            }
+
+        }
+
+        $project_progress = ($score_of_completed_tasks / $total_score_of_tasks) * 100;
+    }
 }

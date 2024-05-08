@@ -104,6 +104,25 @@ class TaskController extends Controller
     {
         $projectId = $task->project_id;
         $request->merge(['project_id' => $projectId]);
+
+        if ($request->has("file")) {
+
+            $parameterRequest = new TaskAttachmentRequest;
+
+            $parameterRequest->merge([
+                'task_id' => $task->id,
+                'user_id' => $request->user()->id,
+                'project_id' => $task->project_id,
+            ]);
+
+            // Inserisci i file nella proprietà 'file'
+            $parameterRequest->files->set('file', $request->file('file')); 
+            //dd($parameterRequest);
+
+            $task_attachments_controller = new TaskAttachmentController;
+
+            $task_attachments_controller->store($parameterRequest);
+        }
         
         $task->update($request->all());
         $task->users()->sync($request->users);
@@ -121,6 +140,7 @@ class TaskController extends Controller
 
     public function change_status(Request $request, Task $task) 
     {
+
         $validatedData = $request->validate([
             'task_status_id' => 'required|numeric|exists:task_statuses,id'
         ]);
@@ -129,7 +149,7 @@ class TaskController extends Controller
         $validatedData['end_date'] = null;
 
         //se utente seleziona "completato" metto una end_date
-        if ($validatedData['task_status_id'] == 4) 
+        if ($validatedData['task_status_id'] == 3) 
         {
             $validatedData['end_date'] =Carbon::now('Europe/Rome')->toDateTimeString();
         }
@@ -140,24 +160,30 @@ class TaskController extends Controller
         // da qui gestisco status del progetto associato al task
         $project = $task->project()->first();
         $project_tasks =  $project->tasks()->get();
+        // dd($project_tasks);
+        
+
+        // FINO A QUI MI TORNA TUTTO
 
         // array che contiene task iniziati (in realtà che non sono "da iniziare")
         //questi possono essere pure completati
         $at_least_initiated_project_tasks = $project->tasks()->where("task_status_id","<>" , 1)->get();
         // trovo tutti i task associati al progetto che sono completati
-        $finalized_project_tasks = $project->tasks()->where("task_status_id", 4)->get();
+        $completed_project_tasks = $project->tasks()->where("task_status_id", 3)->get();
 
         //preparo una variabile booleana da usare in un if dopo
-        $all_project_tasks_are_completed = count($project_tasks) === count($finalized_project_tasks);
+        $all_project_tasks_are_completed = count($project_tasks) === count($completed_project_tasks);
 
+        
         // se array che contiene task iniziati non è vuoto
         // e se non tutti i task sono completati
+        //METTO CHE PROGETTO è INIZIATO
         if (!$at_least_initiated_project_tasks->isEmpty() && !$all_project_tasks_are_completed) {
             //allora metti
             $project->update(["project_status_id" => 2]);  
         }
         // o se tutti i task sono completati mi metti "completato" anche al progetto
-        else if ($all_project_tasks_are_completed) $project->update(["project_status_id" => 4]); 
+        else if ($all_project_tasks_are_completed) $project->update(["project_status_id" => 3]); 
 
         // finito gestione status del progetto associato al task
 

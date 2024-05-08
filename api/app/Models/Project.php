@@ -40,5 +40,33 @@ class Project extends Model
         return $this->hasMany(Task::class);
     }
 
+    public function progress() {
+        $tasks_of_this_project = $this->tasks;
+        //dd($tasks_of_this_project);
+
+        $score_of_completed_tasks = 0;
+        $total_score_of_tasks = 0;
+        $project_progress = 0;
+
+        foreach ($tasks_of_this_project as $task ) {
+            //se task ha status completato, aggiungo score sia a ore totali che completate
+            if ($task->task_status_id === 3) {
+                    $total_score_of_tasks += $task->time_difficulty_score;
+                    $score_of_completed_tasks += $task->time_difficulty_score;
+            // altrimenti aggiungo lo score solo a ore totali
+            } else {
+                    $total_score_of_tasks += $task->time_difficulty_score;
+            }
+
+        }
+
+        //round mi serve per arrotondare e trasformare in intero
+        if ($total_score_of_tasks != 0) {
+            $project_progress = round(($score_of_completed_tasks / $total_score_of_tasks) * 100);
+        }
+
+        return $project_progress;
+    }
+
     
 }

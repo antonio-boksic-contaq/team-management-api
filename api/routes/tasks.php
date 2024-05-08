@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 
 Route::prefix('tasks')->group(function () {
-    Route::group(['middleware' => ['role:Supervisore']], function () {
+    Route::group(['middleware' => ['role:Supervisore|Collaboratore']], function () {
         Route::get('/', [TaskController::class, 'index']);
         Route::post('/', [TaskController::class, 'store']);
         

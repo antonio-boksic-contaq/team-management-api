@@ -17,15 +17,17 @@ class ProjectResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
             'notes'=> $this->notes,
             'project_priority' => new ProjectPriorityResource($this->projectPriority),
-            'progress' => $this->progress === null ? 0 : $this->progress,
+            //'progress' => $this->progress === null ? 0 : $this->progress,
+            "start_date" => $this->start_date,
             "deadline_date" => $this->deadline_date,
-            //Carbon::createFromFormat('d/m/Y', $request->stockupdate)->format('Y-m-d')
             'end_date' => $this->end_date,
             'project_status' => new ProjectStatusResource($this->projectStatus), 
             'project_applicant' => new ProjectApplicantResource($this->projectApplicant), 
@@ -38,6 +40,7 @@ class ProjectResource extends JsonResource
             "deleted_at" => $this->deleted_at,
             "files" => ProjectAttachmentResource::collection($this->whenLoaded('projectAttachments')),
             //"files" => $this->whenLoaded('projectAttachments')
+            "progress"  => $this->progress()
         ];
     }
 }

@@ -20,25 +20,39 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {   
+  
         $query = Project::orderBy("created_at");
 
+        /*
         if (($request->has('month')) )
         {
+
             $months = $request->month;
 
             $query
             //->whereMonth('created_at', $month); // questa è una semplice WHERE
             ->whereIn(DB::raw('MONTH(created_at)'), $months); // questa è una WHERE con un IN(range)
-        }
 
-        if (($request->has('year'))) $query->whereIn(DB::raw('YEAR(created_at)'), $request->year);
+        }
+        */
+        
+        if($request->has('month')) $query->whereIn(DB::raw('MONTH(created_at)'), explode(',',$request->get('month')));
+
+        // l'avevo fatta cosi, e da postman mi arrivava array year[] e perciò andava tutto bene
+        //if ($request->has('year')) $query->whereIn(DB::raw('YEAR(created_at)'), $request->year);
+        
+        // ma da frontend il param che mi arriva si chiama year e non year[], e mi arriva come una stringa ad esempio "1,2,3"
+        // perciò devo usare explode per creare un array da usare in WhereIn
+        //if ($request->has('year')) $query->whereIn(DB::raw('YEAR(created_at)'), $request->year);
+        if ($request->has('year')) $query->whereIn(DB::raw('YEAR(created_at)'), explode(',',$request->get('year')));
+
 
         if ($request['trashed'] == 1 ) $query->withTrashed();
 
         if ($request['trashed'] == 2 ) $query->onlyTrashed();
 
         if($request->has('export')){
-            return Excel::download(new ProjectsExport($query->get(), $request->has('trashed')), 'progetti.xlsx');
+            return Excel::download(new ProjectsExport(ProjectResource::collection($query->get()), $request->has('trashed')), 'progetti.xlsx');
         }
         
         $projects = $query->get();
@@ -193,5 +207,13 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         //
+    }
+    public function years(Request $request)
+    {
+        return Project::select(DB::raw('YEAR(created_at) as id'), DB::raw('YEAR(created_at) as year'))
+        ->whereNotNull('created_at')
+        ->orderBy('year','desc')
+        ->distinct()
+        ->get();
     }
 }
