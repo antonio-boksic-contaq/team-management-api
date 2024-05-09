@@ -24,6 +24,9 @@ class TaskController extends Controller
             $query->where('project_id', $request->project_id);
         }
 
+        if ($request['trashed'] == 1 ) $query->withTrashed();
+        if ($request['trashed'] == 2 ) $query->onlyTrashed();
+
         return response()->json(TaskResource::collection($query->get()));
     }
 
