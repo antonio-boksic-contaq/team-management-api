@@ -144,6 +144,12 @@ class TaskController extends Controller
     public function change_status(Request $request, Task $task) 
     {
 
+        //ID DEI TASK_STATUS
+        // 1 DA INIZIARE
+        // 2 IN CORSO
+        // 3 COMPLETATO
+
+
         $validatedData = $request->validate([
             'task_status_id' => 'required|numeric|exists:task_statuses,id'
         ]);
@@ -152,12 +158,12 @@ class TaskController extends Controller
         $validatedData['end_date'] = null;
 
         //se utente seleziona "completato" metto una end_date
-        if ($validatedData['task_status_id'] == 3) 
-        {
-            $validatedData['end_date'] =Carbon::now('Europe/Rome')->toDateTimeString();
-        }
-
+        if ($validatedData['task_status_id'] == 3) $validatedData['end_date'] =Carbon::now('Europe/Rome')->toDateTimeString();
+    
         $task->update($validatedData);
+
+        //TODO PER POTER PULIRE UN PO IL CODICE
+        //POTREI FARE UN ALTOR METODO PER LA PARTE QUA SOTTO RELATIVA ALLA GESTIONE DELLO STATUS DEL PROGETTO
 
         //
         // da qui gestisco status del progetto associato al task
